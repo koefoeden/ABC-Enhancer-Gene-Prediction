@@ -1,10 +1,7 @@
 ## call macs2 -- if multiple accessibility inputs for one biosample, will aggregate into one output
 rule call_macs_peaks: 
 	input:
-		accessibility = get_accessibility_files,
-	params:
-		pval = config['params_macs']['pval'],
-		genome_size = config['params_macs']['genome_size'],
+	  custom_peaks = lambda wildcards: BIOSAMPLES_CONFIG.loc[wildcards.biosample, "atac_peaks_file"]
 	conda:
 		"../envs/abcenv.yml"
 	output: 
@@ -13,24 +10,7 @@ rule call_macs_peaks:
 		mem_mb=determine_mem_mb
 	shell: 
 		"""
-		if [[ "{input.accessibility}" == *tagAlign* ]]; then
-			FORMAT="BED"
-		else
-			FORMAT="AUTO"
-		fi
-
-		macs2 callpeak \
-		-f $FORMAT \
-		-g {params.genome_size} \
-		-p {params.pval} \
-		-n macs2 \
-		--shift -75 \
-		--extsize 150 \
-		--nomodel \
-		--keep-dup all \
-		--call-summits \
-		--outdir {RESULTS_DIR}/{wildcards.biosample}/Peaks \
-		-t {input.accessibility} 
+		cp {input.custom_peaks} {output.narrowPeak}
 		"""
 
 rule generate_chrom_sizes_bed_file:
