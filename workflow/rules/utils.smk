@@ -14,7 +14,7 @@ wildcard_constraints:
 FILTERED_PREDICTION_FILE_FORMAT_TEMPLATE = "threshold{threshold}{separator}{other_flags}"
 DEFAULT_THRESHOLD = .02
 
-def determine_mem_mb(wildcards, input, attempt, scaler=4, min_gb=8):
+def determine_mem_mb(wildcards, input, attempt, scaler=4, min_gb=64):
 	# Memory resource calculator for snakemake rules
 	input_size_mb = input.size_mb
 	if ".gz" in str(input):
